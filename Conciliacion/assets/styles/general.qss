@@ -1,0 +1,13 @@
+/* Estilos generales para toda la aplicación */
+
+/* Estilo para los botones del menú principal */
+QPushButton#mainMenuButton {
+    background-color: #000000;
+    color: #FFA500;
+    border: none;
+    border-right: 2px solid #333333;
+    padding: 0 40px;
+}
+QPushButton#mainMenuButton:hover {
+    background-color: #1a1a1a;
+}
