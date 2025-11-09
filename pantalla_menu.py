@@ -3,7 +3,8 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QH
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
-#prueba 2
+#prueba 
+#Hola que tal
 
 class TarjetaArchivo(QWidget):
     def __init__(self, titulo, ventana_principal):
