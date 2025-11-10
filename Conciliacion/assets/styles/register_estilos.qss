@@ -1,0 +1,49 @@
+#titulo {
+    font-size: 22px;
+    color: #EFB90B;
+    font-weight: bold;
+}
+
+#CustomTitleBar {
+    background-color: transparent;
+}
+
+#BackgroundWidget {
+    background-color: #181A20;
+    border-radius: 12px;
+}
+
+#ContentWidget {
+    background-color: transparent;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+#btnMinimize, #btnMaximize, #btnClose {
+    background-color: transparent;
+    border-radius: 25; 
+    color: white;
+    border: none;
+}
+
+#input_nombre,#input_apellido,#input_email,#input_registro_contrasena,#input_registro_confirmar{
+    background-color: #232A34;
+    border-radius: 10px;
+    color: #E6E8EC;
+}
+
+QLineEdit:focus {
+    border: 1px solid #FDD635;
+}
+
+#btn_registro_final,#btn_volver_login{
+    background-color: #4C3500;
+    border-radius: 10px;
+}
+
+
+#btn_registro_final:hover,#btn_volver_login:hover{
+        background-color: #EFB90B;
+}
+
+#btn_registro_final:pressed,#btn_volver_login:pressed{background-color: #FDD635;
+    color: #4A4A4A;}

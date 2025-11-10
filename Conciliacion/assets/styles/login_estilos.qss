@@ -1,0 +1,55 @@
+#BackgroundWidget {
+    background-color: #181A20;
+    border-radius: 12px;
+}
+
+#ContentWidget {
+    background-color: transparent;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+#titulo {
+    font-size: 22px;
+    color: #EFB90B;
+    font-weight: bold;
+}
+
+#CustomTitleBar {
+    background-color: transparent;
+}
+
+#btnMinimize, #btnMaximize, #btnClose {
+    background-color: transparent;
+    border-radius: 25; /* OJO: 25px o 25pt, depende de tu configuración base */
+    color: white;
+    border: none;
+}
+
+#input_usuario, #input_contrasena {
+    background-color: #232A34;
+    border-radius: 10px;
+    color: #E6E8EC;
+}
+
+#input_usuario:focus, #input_contrasena:focus {
+    border: 1px solid #FDD635;
+}
+
+#btn_login, #btn_register {
+    background-color: #4C3500;
+    border-radius: 10px;
+}
+
+#btn_login:hover, #btn_register:hover {
+    background-color: #EFB90B;
+}
+
+#btn_login:hover {
+    cursor: hand;
+}
+
+#btn_login:pressed, #btn_register:pressed {
+    background-color: #FDD635;
+    color: #4A4A4A;
+}
