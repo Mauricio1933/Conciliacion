@@ -1,0 +1,104 @@
+QWidget{
+    background-color: transparent;
+    color: #E6E8EC;
+}
+
+#LoginUserInput,
+#LoginPasswordInput,
+#RegisterNameInput,
+#RegisterLastNameInput,
+#RegisterUsernameInput,
+#RegisterEmailInput,
+#RegisterPasswordInput,
+#RegisterConfirmPasswordInput {
+    background-color: #181A20;
+    border-radius: 10px;
+    color: #E6E8EC;
+}
+
+#LoginUserInput:focus,
+#LoginPasswordInput:focus,
+#RegisterNameInput:focus,
+#RegisterLastNameInput:focus,
+#RegisterUsernameInput:focus,
+#RegisterEmailInput:focus,
+#RegisterPasswordInput:focus,
+#RegisterConfirmPasswordInput:focus {
+     border: 1px solid #EFB90B; 
+
+}
+
+
+#MinimizeButton,
+#CloseButton {
+    background-color: transparent;
+    border-radius: 25; 
+    color: white;
+    border: none;
+}
+
+#TitleBar {
+
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+#LoginButton,
+#RegisterButton{
+        background-color: #4C3500;
+    border-radius: 10px;
+}
+
+#SectionTitleLabel {
+    font-size: 22px;
+    color: #EFB90B;
+    font-weight: bold;
+}
+
+#OverlayWidget{
+    background-color: #EFB90B;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+}
+
+#ToggleButton {
+    background-color: #1f2630; /* Color oscuro como el fondo principal */
+    color: #EFB90B; /* Color del texto igual al del overlay */
+    border-radius: 10px; 
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Estilos iniciales para los frames de contenido */
+#LoginFrame {
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+}
+
+#RegisterFrame {
+    border-radius: 0px;
+}
+
+#TitleBar, #ContentFrame, #LoginFrame, #RegisterFrame {
+    background-color: transparent;
+}
+#CentralWidget {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #1f2630, stop:1 #181A20);
+    border-radius: 15px; /* O el valor que prefieras */
+}
+
+
+#OverlayTitleBar{
+    background-color: transparent;
+}
+
+#OverlayTitleLabel{
+    background-color: transparent;
+    font-size: 22px;
+    color: #1f2630;
+    font-weight: bold;
+}
