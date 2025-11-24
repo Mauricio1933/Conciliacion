@@ -49,7 +49,6 @@ class LibroVentasCsv:
         return df_limpio
     
     def _separar_info_pagos(self, df: pd.DataFrame) -> pd.DataFrame:
-        #Utilice regex para extraer la informacion de la celda combinada
         print(f"\n[3/4] Extrayendo información de pagos...")
         
         patron = r'FP:\s*(?P<Forma_Pago>[^,]+),\s*Fec:\s*(?P<Fecha_Pago>[^,]+),\s*Ref:\s*(?P<Referencia>[^,]+),\s*Bco:\s*(?P<Banco>[^)]+)'
@@ -63,10 +62,8 @@ class LibroVentasCsv:
             new_columns.append(f"{col_name}_{match_idx + 1}")
         matches_wide.columns = new_columns
         
-        # Unir con el DataFrame original (LEFT JOIN)
         df_final = df.join(matches_wide, how='left')
         
-        # Limpiar espacios en blanco
         for col in df_final.columns:
             if df_final[col].dtype == 'object':
                 df_final[col] = df_final[col].str.strip()
@@ -96,18 +93,14 @@ class LibroVentasCsv:
         return df_filtrado
     
     def _ordenar_columnas(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Ordena las columnas en el formato final."""
         print(f"\n[4/4] Aplicando formato final...")
         
-        # Definir orden de columnas
         cols_base = ['Nro_Control', 'Monto_Total']
         cols_pago_1 = ['Forma_Pago_1', 'Fecha_Pago_1', 'Referencia_1', 'Banco_1']
         cols_pago_2 = ['Forma_Pago_2', 'Fecha_Pago_2', 'Referencia_2', 'Banco_2']
         
-        # Construir lista de columnas finales
         columnas_finales = cols_base.copy()
         
-        # Agregar columnas de Pago 1
         if 'Forma_Pago_1' in df.columns:
             columnas_finales.extend(cols_pago_1)
         else:
@@ -115,14 +108,11 @@ class LibroVentasCsv:
                 df[c] = ""
             columnas_finales.extend(cols_pago_1)
         
-        # Agregar columnas de Pago 2 si existen
         if 'Forma_Pago_2' in df.columns:
             columnas_finales.extend(cols_pago_2)
         
-        # Aplicar orden
         df_ordenado = df[columnas_finales]
         
-        # Reemplazar NaN con strings vacíos
         df_ordenado.fillna('', inplace=True)
         
         print(f"✓ Formato aplicado correctamente")
@@ -134,24 +124,35 @@ class LibroVentasCsv:
         print("PROCESAMIENTO COMPLETO DEL LIBRO DE VENTAS")
         print("=" * 60)
         
-        # Flujo de procesamiento
         df = self._cargar_excel()
         df = self._limpiar_datos(df)
         df = self._separar_info_pagos(df)
         df = self._aplicar_filtro_banco(df)
         df = self._ordenar_columnas(df)
         
-
+        if 'Referencia_1' in df.columns:
+            df['Referencia_1'] = (
+                df['Referencia_1']
+                .astype(str)
+                .str.replace('.0', '', regex=False)
+                .str.replace(r'[-\.]+$', '', regex=True)
+            )
+        if 'Referencia_2' in df.columns:
+            df['Referencia_2'] = (
+                df['Referencia_2']
+                .astype(str)
+                .str.replace('.0', '', regex=False)
+                .str.replace(r'[-\.]+$', '', regex=True)
+            )
+        
         df.to_csv(self.csv_path, sep=';', index=False, encoding='utf-8-sig')
         
-        # Resumen
         print("\n" + "=" * 60)
         print("PROCESO COMPLETADO EXITOSAMENTE")
         print("=" * 60)
         print(f"📊 Total de facturas procesadas: {len(df)}")
         print(f"📁 Archivo generado: {self.csv_path}")
         
-        # Estadísticas de pagos
         if 'Forma_Pago_1' in df.columns:
             pagos_1 = (df['Forma_Pago_1'] != '').sum()
             print(f"💳 Facturas con al menos 1 pago: {pagos_1}")
@@ -161,57 +162,3 @@ class LibroVentasCsv:
             print(f"💳 Facturas con 2 pagos: {pagos_2}")
         
         return self.csv_path
-
-
-class LimpiarGuionesReferencias:
-    def __init__(self, csv_path: str):
-        self.csv_path = Path(csv_path)
-        self.csv_limpio_path = self.csv_path.parent / f"{self.csv_path.stem}_limpio.csv"
-    
-    def _limpiar_referencia(self, ref):
-        if pd.isna(ref) or ref == '':
-            return ref
-        
-        ref_str = str(ref)
-        ref_limpio = re.sub(r'[-\.]+$', '', ref_str)
-        
-        return ref_limpio
-    
-    def ejecutar(self) -> Path:
-        print("=" * 60)
-        print("LIMPIEZA DE GUIONES EN REFERENCIAS")
-        print("=" * 60)
-        
-        print("\n[1/3] Cargando archivo CSV...")
-        df = pd.read_csv(self.csv_path, sep=';', encoding='utf-8-sig')
-        print(f"✓ Archivo cargado: {len(df)} filas")
-        
-        print("\n[2/3] Limpiando guiones de referencias...")
-        
-        guiones_ref1_antes = df['Referencia_1'].astype(str).str.contains('-', na=False).sum()
-        guiones_ref2_antes = df['Referencia_2'].astype(str).str.contains('-', na=False).sum() if 'Referencia_2' in df.columns else 0
-        
-        df['Referencia_1'] = df['Referencia_1'].apply(self._limpiar_referencia)
-        if 'Referencia_2' in df.columns:
-            df['Referencia_2'] = df['Referencia_2'].apply(self._limpiar_referencia)
-        
-        guiones_ref1_despues = df['Referencia_1'].astype(str).str.contains('-', na=False).sum()
-        guiones_ref2_despues = df['Referencia_2'].astype(str).str.contains('-', na=False).sum() if 'Referencia_2' in df.columns else 0
-        
-        print(f"✓ Referencias limpiadas:")
-        print(f"   - Referencia_1: {guiones_ref1_antes} con guiones → {guiones_ref1_despues} restantes")
-        if 'Referencia_2' in df.columns:
-            print(f"   - Referencia_2: {guiones_ref2_antes} con guiones → {guiones_ref2_despues} restantes")
-        
-        print("\n[3/3] Guardando archivo limpio...")
-        df.to_csv(self.csv_limpio_path, sep=';', index=False, encoding='utf-8-sig')
-        
-        print("\n" + "=" * 60)
-        print("PROCESO COMPLETADO")
-        print("=" * 60)
-        print(f"📊 Total de filas procesadas: {len(df)}")
-        print(f"📁 Archivo de entrada: {self.csv_path}")
-        print(f"📁 Archivo de salida: {self.csv_limpio_path}")
-        print(f"🧹 Guiones eliminados: {(guiones_ref1_antes + guiones_ref2_antes) - (guiones_ref1_despues + guiones_ref2_despues)}")
-        
-        return self.csv_limpio_path
