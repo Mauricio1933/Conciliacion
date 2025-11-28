@@ -25,7 +25,8 @@ class LibroVentasCsv:
             self.excel_path,
             sheet_name=self.sheet_name,
             header=5,
-            usecols=self.use_cols
+            usecols=self.use_cols,
+            engine='openpyxl'  # Especificar motor para .xlsx
         )
         
         print(f"Columnas cargadas: {df.columns.tolist()}")

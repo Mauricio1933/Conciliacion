@@ -57,6 +57,9 @@ class RegistroSaintCsv:
         if self.max_rows:
             params['nrows'] = self.max_rows
         
+        # Especificar motor para archivos .xlsx
+        params['engine'] = 'openpyxl'
+        
         df = pd.read_excel(self.excel_path, **params)
         
         print(f"✓ Datos cargados: {len(df)} filas")

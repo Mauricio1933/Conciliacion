@@ -11,6 +11,16 @@ from src.gui.widgets.barra_custom import CustomTitleBar
 from src.gui.widgets.nav_custom import NavBar
 from src.gui.usuarios_ventana import UsersView
 
+#================================================================================
+# IMPORTACIONES PARA CONCILIACIÓN
+#================================================================================
+from src.gui.conciliacion_view import ConciliacionView
+from src.logic.conciliacion_maestra import ConciliacionMaestra
+from src.logic.convert_pdf_csv import EstadoDeCuentaPdfToCsv
+from src.logic.libro_ventas_processor import LibroVentasCsv
+from src.logic.Registro_saint_to_csv import RegistroSaintCsv
+import pandas as pd
+
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 ASSETS_PATH = os.path.abspath(os.path.join(BASE_PATH, "../../assets"))
 
@@ -118,7 +128,7 @@ class MainWindow(QWidget): # MainWindow
     FILE_FILTERS = {
         "Estado de Cuenta": "Archivos PDF (*.pdf);;Todos los Archivos (*.*)",
         "Libro de Venta": "Archivos Excel (*.xlsx *.xls);;Todos los Archivos (*.*)",
-        "Registro SAINT": "Archivos CSV (*.csv);;Archivos de Texto (*.txt);;Todos los Archivos (*.*)"
+        "Registro SAINT": "Archivos Excel (*.xlsx *.xls);;Todos los Archivos (*.*)"  # Cambiado a Excel
     }
 
 
@@ -126,9 +136,20 @@ class MainWindow(QWidget): # MainWindow
         super().__init__()
         
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground) 
+        # self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)  # Comentado para evitar transparencia
         self.setObjectName("MainWindow")
         self.resize(1100, 700)
+        
+        #================================================================================
+        # TRACKING DE ARCHIVOS IMPORTADOS
+        #================================================================================
+        self.archivos_importados = {
+            "Estado de Cuenta": None,
+            "Libro de Venta": None,
+            "Registro SAINT": None
+        }
+        
+        self.btn_conciliar = None  # Referencia al botón Conciliar
         
         self.main_layout = QVBoxLayout(self) 
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -148,9 +169,15 @@ class MainWindow(QWidget): # MainWindow
         self.main_layout.addWidget(self.stacked_widget)
         self.registros_view = self._create_registros_view()
         self.usuarios_view = UsersView()
+        
+        #================================================================================
+        # VISTA DE CONCILIACIÓN
+        #================================================================================
+        self.conciliacion_view = ConciliacionView()
 
         self.stacked_widget.addWidget(self.registros_view)
         self.stacked_widget.addWidget(self.usuarios_view)
+        self.stacked_widget.addWidget(self.conciliacion_view)
 
         self.nav_bar.registros_clicked.connect(self._show_registros_view)
         self.nav_bar.usuarios_clicked.connect(self._show_usuarios_view)
@@ -169,7 +196,10 @@ class MainWindow(QWidget): # MainWindow
     def _setup_styles(self):
         self.setFont(QFont("Inter", 11))
 
-        qss_files = ["main_estilos.qss", "usuarios_estilos.qss"]
+        #================================================================================
+        # CARGAR ESTILOS INCLUYENDO CONCILIACIÓN
+        #================================================================================
+        qss_files = ["main_estilos.qss", "usuarios_estilos.qss", "conciliacion_estilos.qss"]
         
         combined_styles = ""
         for filename in qss_files:
@@ -188,6 +218,11 @@ class MainWindow(QWidget): # MainWindow
             print("Advertencia: No se pudo cargar ningun estilo QSS.")
 
     def _handle_import_logic(self, file_path: str, card_widget: QWidget, icon_label: QLabel, title_label: QLabel, card_title: str):
+        #================================================================================
+        # GUARDAR RUTA DEL ARCHIVO IMPORTADO
+        #================================================================================
+        self.archivos_importados[card_title] = file_path
+        
         icon_size = QSize(80, 80)
         
         icon_pair = self.ICON_MAP.get(card_title, ("default.svg", "check_circle.svg"))
@@ -208,6 +243,11 @@ class MainWindow(QWidget): # MainWindow
         
         card_widget.style().polish(card_widget)
         title_label.style().polish(title_label)
+        
+        #================================================================================
+        # VERIFICAR SI TODOS LOS ARCHIVOS ESTÁN IMPORTADOS
+        #================================================================================
+        self._verificar_archivos_completos()
         
         QMessageBox.information(
             self, 
@@ -262,18 +302,110 @@ class MainWindow(QWidget): # MainWindow
         spacer_gap = QSpacerItem(20, 50, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         content_layout.addItem(spacer_gap)
         
-        btn_conciliar = QPushButton("Conciliar")
-        btn_conciliar.setObjectName("ConciliarButton")
-        btn_conciliar.setFixedSize(200, 45) 
-        btn_conciliar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        btn_conciliar.clicked.connect(lambda: QMessageBox.information(self, "Acción", "Función 'Conciliar' activada."))
+        #================================================================================
+        # BOTÓN CONCILIAR CON LÓGICA COMPLETA
+        #================================================================================
+        self.btn_conciliar = QPushButton("Conciliar")
+        self.btn_conciliar.setObjectName("ConciliarButton")
+        self.btn_conciliar.setFixedSize(200, 45) 
+        self.btn_conciliar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.btn_conciliar.setEnabled(False)  # Deshabilitado hasta que se importen los 3 archivos
+        self.btn_conciliar.clicked.connect(self._ejecutar_conciliacion)
 
         conciliar_container = QWidget()
         conciliar_layout = QHBoxLayout(conciliar_container)
         conciliar_layout.setContentsMargins(0, 0, 0, 0)
         conciliar_layout.addStretch()
-        conciliar_layout.addWidget(btn_conciliar)
+        conciliar_layout.addWidget(self.btn_conciliar)
         conciliar_layout.addStretch()
         content_layout.addWidget(conciliar_container)
         content_layout.addStretch()
         return content_widget
+    
+    #================================================================================
+    # MÉTODOS DE CONCILIACIÓN
+    #================================================================================
+    
+    def _verificar_archivos_completos(self):
+        """Verifica si los 3 archivos están importados y habilita el botón Conciliar"""
+        todos_importados = all(ruta is not None for ruta in self.archivos_importados.values())
+        
+        if self.btn_conciliar:
+            self.btn_conciliar.setEnabled(todos_importados)
+            
+            if todos_importados:
+                self.btn_conciliar.setToolTip("Ejecutar conciliación completa")
+            else:
+                archivos_faltantes = [nombre for nombre, ruta in self.archivos_importados.items() if ruta is None]
+                self.btn_conciliar.setToolTip(f"Faltan archivos: {', '.join(archivos_faltantes)}")
+    
+    def _ejecutar_conciliacion(self):
+        """Ejecuta la conciliación completa y muestra resultados"""
+        try:
+            # Cargar archivos
+            print("\n🔄 Cargando archivos...")
+            
+            #================================================================================
+            # PROCESAR ARCHIVOS CON LOS PROCESADORES EXISTENTES
+            #================================================================================
+            
+            # Estado de Cuenta (PDF → CSV)
+            ruta_estado = self.archivos_importados["Estado de Cuenta"]
+            print(f"📄 Procesando Estado de Cuenta: {ruta_estado}")
+            try:
+                procesador_estado = EstadoDeCuentaPdfToCsv(ruta_estado)
+                csv_estado = procesador_estado.ejecutar()
+                df_estado = pd.read_csv(csv_estado)
+                print(f"✅ Estado de Cuenta procesado: {len(df_estado)} movimientos\n")
+            except Exception as e:
+                raise Exception(f"Error al procesar Estado de Cuenta (PDF):\n{str(e)}\n\nVerifique que el PDF no esté corrupto o protegido.")
+            
+            # Libro de Ventas (Excel → CSV)
+            ruta_libro = self.archivos_importados["Libro de Venta"]
+            print(f"📊 Procesando Libro de Ventas: {ruta_libro}")
+            try:
+                procesador_libro = LibroVentasCsv(ruta_libro, banco_filtro='BANCARIBE')
+                csv_libro = procesador_libro.ejecutar()
+                df_libro = pd.read_csv(csv_libro, sep=';')
+                print(f"✅ Libro de Ventas procesado: {len(df_libro)} facturas\n")
+            except Exception as e:
+                raise Exception(f"Error al procesar Libro de Ventas (Excel):\n{str(e)}")
+            
+            # Registro SAINT (Excel → CSV)
+            ruta_saint = self.archivos_importados["Registro SAINT"]
+            print(f"📋 Procesando Registro SAINT: {ruta_saint}")
+            try:
+                procesador_saint = RegistroSaintCsv(ruta_saint)
+                csv_saint = procesador_saint.ejecutar()
+                df_saint = pd.read_csv(csv_saint)
+                print(f"✅ Registro SAINT procesado: {len(df_saint)} registros\n")
+            except Exception as e:
+                raise Exception(f"Error al procesar Registro SAINT (Excel):\n{str(e)}")
+            
+            # Crear conciliador maestro
+            conciliador = ConciliacionMaestra(df_estado, df_libro)
+            
+            # Ejecutar conciliación
+            resultados = conciliador.ejecutar_conciliacion_completa()
+            
+            # Mostrar resultados en la vista
+            self.conciliacion_view.cargar_resultados(resultados)
+            self.stacked_widget.setCurrentWidget(self.conciliacion_view)
+            
+            QMessageBox.information(
+                self,
+                "Conciliación Exitosa",
+                f"Se procesaron {len(resultados)} transacciones.\n\nRevise los resultados en la tabla.",
+                QMessageBox.StandardButton.Ok
+            )
+            
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Error en Conciliación",
+                f"Ocurrió un error durante la conciliación:\n\n{str(e)}",
+                QMessageBox.StandardButton.Ok
+            )
+            print(f"Error: {e}")
+            import traceback
+            traceback.print_exc()
