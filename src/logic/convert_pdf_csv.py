@@ -1,8 +1,9 @@
 import pdfplumber
 import csv
 import re
+import json
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Optional
 
 class EstadoDeCuentaPdfToCsv:
     #Procesa estados de cuenta en PDF y los convierte a CSV limpio.
@@ -11,6 +12,7 @@ class EstadoDeCuentaPdfToCsv:
         self.base = self.pdf_path.stem
         self.txt_path = self.pdf_path.with_suffix('.txt')
         self.csv_path = self.pdf_path.parent / f"{self.base}_limpio.csv"
+        self.resumen_path = self.pdf_path.parent / f"{self.base}_resumen.json"
         self.patron_fecha = re.compile(r'^\d{2}-[A-Z]{3}-\d{4}$')
         self.patron_numero_largo = re.compile(r'\d{10,}')  # Números de 10+ dígitos
 
@@ -142,13 +144,59 @@ class EstadoDeCuentaPdfToCsv:
         print(f"✓ CSV generado: {self.csv_path} ({len(movimientos)} movimientos)")
         return self.csv_path
 
-    def ejecutar(self) -> Path:
-        """Ejecuta el flujo completo: PDF → TXT → CSV (elimina TXT automáticamente)"""
+    def extraer_resumen_bancario(self) -> Optional[Dict]:
+        """Extrae el resumen bancario del TXT (Saldo Mes Anterior, NC, ND, Saldo Final)."""
+        if not self.txt_path.exists():
+            return None
+        
+        try:
+            with open(self.txt_path, 'r', encoding='utf-8') as f:
+                contenido = f.read()
+            
+            resumen = {}
+            
+            # Buscar Saldo Mes Anterior
+            match_saldo_anterior = re.search(r'Saldo Mes Anterior\s+--\s+([\d.,]+)', contenido)
+            if match_saldo_anterior:
+                resumen['saldo_mes_anterior'] = match_saldo_anterior.group(1)
+            
+            # Buscar Notas de Crédito (cantidad y monto)
+            match_nc = re.search(r'Notas de Crédito\s+(\d+)\s+([\d.,]+)', contenido)
+            if match_nc:
+                resumen['notas_credito_cantidad'] = int(match_nc.group(1))
+                resumen['notas_credito_monto'] = match_nc.group(2)
+            
+            # Buscar Notas de Débito (cantidad y monto)
+            match_nd = re.search(r'Notas de Débito\s+(\d+)\s+([\d.,]+)', contenido)
+            if match_nd:
+                resumen['notas_debito_cantidad'] = int(match_nd.group(1))
+                resumen['notas_debito_monto'] = match_nd.group(2)
+            
+            # Buscar Saldo Final del Mes
+            match_saldo_final = re.search(r'Saldo Final del Mes\s+--\s+([\d.,]+)', contenido)
+            if match_saldo_final:
+                resumen['saldo_final_mes'] = match_saldo_final.group(1)
+            
+            # Guardar en JSON
+            if resumen:
+                with open(self.resumen_path, 'w', encoding='utf-8') as f:
+                    json.dump(resumen, f, indent=2, ensure_ascii=False)
+                print(f"✓ Resumen bancario extraído: {self.resumen_path}")
+            
+            return resumen if resumen else None
+            
+        except Exception as e:
+            print(f"⚠️ Error al extraer resumen bancario: {e}")
+            return None
+
+    def ejecutar(self) -> Tuple[Path, Optional[Dict]]:
+        """Ejecuta el flujo completo: PDF → TXT → CSV + Resumen (elimina TXT automáticamente)."""
         print(f"Procesando: {self.pdf_path.name}")
         try:
             self.convertir_pdf_a_txt()
+            resumen = self.extraer_resumen_bancario()
             csv_resultado = self.procesar_txt_a_csv()
-            return csv_resultado
+            return csv_resultado, resumen
         finally:
             # Eliminar archivo TXT temporal incluso si hay errores
             self.limpiar_archivos_intermedios()
