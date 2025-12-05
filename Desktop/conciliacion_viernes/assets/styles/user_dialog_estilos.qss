@@ -1,0 +1,40 @@
+
+QLineEdit#FirstNameInput,
+QLineEdit#LastNameInput,
+QLineEdit#UsernameInput,
+QLineEdit#EmailInput,
+QLineEdit#PasswordInput,
+QLineEdit#ConfirmPasswordInput {
+    background-color: #181A20;
+    border-radius: 10px;
+    color: #E6E8EC;
+}
+
+#UserFormDialog #DialogSaveButton {
+    background: #EFB90B;
+    border-radius: 7px;
+    color: #4C3500;
+    padding: 8px 16px;
+    min-width: 80px;
+}
+
+#UserFormDialog #DialogSaveButton:hover {
+    background-color: #218838;
+}
+
+#UserFormDialog #DialogCancelButton {
+    background: #EFB90B;
+    border-radius: 7px;
+    color: #4C3500;
+    padding: 8px 16px;
+    
+}
+
+#UserFormDialog #DialogCancelButton:hover {
+    background-color: #c82333;
+}
+
+#DialogContainerWidget {
+      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #1f2630, stop:1 #181A20);
+      border-radius: 10px;
+}
