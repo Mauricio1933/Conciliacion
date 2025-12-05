@@ -1,0 +1,31 @@
+
+============================
+	Validaciones
+============================
+
+1- La jeraquia del usuario
+	el admin solo puede agregar usuarios, los que agrege simplemente seran asistentes
+	el acceso al programa seran limitadas para aquellos que sean usuario tipo "asistente"
+	solo podran tener acceso a la pestaña de reportes, ayuda y salir
+	
+2-El Admin
+	El administrador no podra eliminar por ninguna razon eliminar un usuario ni a el mismo,
+	solo colocarse en un estado inactivo o activo, debido a que el proceso de conciliacion,
+	una vez emitido un reporte este mismo sera guardado automaticamente, estara guardado con el
+	nombre de usuario que realizo el trabajo, asi para que quede un registro de lo que hizo en el programa,
+	muy bueno para el caso de una auditoria
+
+3-Las Notas
+	Cada partida de conciliacion(Filas) tendran para poder agregarle una nota(cosa que el contador encargado hara),
+	cada nota hecha a cada fila, al final sera anexada a un txt donde contendra todas las notas que se hizo y tambien
+	la fila a cual se la hizo
+
+
+5-Limite de Contraseña
+        La contraseña debe tener como minimo 6 digitos, no pueden ser 3
+
+6 - Recordar Usuario y contraseña
+	Cuando se inicia el programa aparece el usuario y contraseña ya colocados, esto pasa porque la opcion de "Recordar ususario y contraseña" esta 
+	activado pero hay que colocar solo "Recordar usuario" pq asi evitamos que cualquiera venga y acceda pq estan ya el usuario y la contraseña 
+	colocadas.
+
