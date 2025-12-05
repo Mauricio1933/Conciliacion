@@ -1,0 +1,59 @@
+#AppContainer {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #1f2630, stop:1 #181A20);
+    border-radius: 10px;
+}
+
+#ContentArea {
+    
+}
+
+#RecordsTitle {
+    color: #EFB90B;
+}
+
+
+#AddUserTextLabel {
+    color: white;
+}
+
+#BtnAddUserIcon {
+    background-color: #1f2630; 
+    border: none;
+}
+
+#BtnAddUserIcon:hover {
+    background-color: grey;
+    border-radius: 20px;
+}
+
+#ThinRectangle { 
+    background-color: #181A20;
+    border-radius: 15px;
+    border: 1px solid #F2CD55;
+}
+
+
+#UserNameLabel, #UserEmailLabel, #UsernameIDLabel {
+    color: #EFB90B;
+    background-color: transparent;
+}
+
+#UserIconLabel, #EmailIconLabel {
+    background-color: transparent;
+}
+
+
+#EditButton, #DeleteButton {
+    background-color: transparent;
+}
+
+#ContentArea{
+    border-radius: 12px;
+}
+
+
+QFrame#RecordGridItem {
+    background-color: #181A20;
+    border: 2px solid #F2CD55;
+    border-radius: 10px;
+}

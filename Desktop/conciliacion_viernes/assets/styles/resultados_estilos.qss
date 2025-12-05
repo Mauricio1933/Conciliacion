@@ -1,0 +1,76 @@
+
+QWidget#ResultadosContentWidget {
+    background-color: #1c1f26; 
+    border-radius: 10px;
+}
+
+
+QTableWidget {
+    background-color: #181A20;
+    color: white;
+    gridline-color: #333333;
+    border: 1px solid #4C3500;
+    border-radius: 5px;
+}
+
+QTableWidget::item {
+    padding: 5px;
+}
+
+QTableWidget::item:selected {
+    background-color: #4C3500;
+    color: #F2CD55;
+}
+
+
+QHeaderView::section {
+    background-color: #181A20;
+    color: #F2CD55;
+    padding: 8px;
+    border: none;
+    border-bottom: 2px solid #EFB90B;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+
+QScrollBar:vertical {
+    border: none;
+    background: #181A20;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #4C3500;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+#HeaderTitulo,#HeaderSubtitulo{
+    color:white;
+}
+
+#BotonReporte{
+    background-color: #1f2630; 
+    color: #EFB90B; 
+    border-radius: 10px; 
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QPushButton#BotonVolver {
+    background-color: #424242;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    }
+
+QPushButton#BotonVolver:hover {
+    background-color: #616161;
+    }
