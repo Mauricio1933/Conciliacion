@@ -1,0 +1,51 @@
+
+==================================================
+FECHA: 2025-12-06 08:41:19
+--------------------------------------------------
+DATOS DEL REGISTRO:
+  Fecha: 05-JUN-2025
+  Referencia: 39804129485248101022041492925661
+  Descripción: COMISION PAGO MOVIL
+  Cargo: 118,23
+  Abono: -
+  SAE (Debe): -
+  SAINT (Haber): -
+  Estado: Conciliado
+--------------------------------------------------
+NOTA:
+prueba nota 2
+==================================================
+
+==================================================
+FECHA: 2025-12-06 08:41:24
+--------------------------------------------------
+DATOS DEL REGISTRO:
+  Fecha: 05-JUN-2025
+  Referencia: 4372001004096
+  Descripción: COMISION CREDITO BANKING INMEDIATO (Dif: 2702.15)
+  Cargo: 177,80
+  Abono: -
+  SAE (Debe): -
+  SAINT (Haber): -
+  Estado: Requiere Revisión - Diferencia Comisiones
+--------------------------------------------------
+NOTA:
+prueba nota 3
+==================================================
+
+==================================================
+FECHA: 2025-12-06 08:41:41
+--------------------------------------------------
+DATOS DEL REGISTRO:
+  Fecha: 05-JUN-2025
+  Referencia: 4372001026417
+  Descripción: COMISION CREDITO BANKING INMEDIATO (Dif: 2702.15)
+  Cargo: 40,80
+  Abono: -
+  SAE (Debe): -
+  SAINT (Haber): -
+  Estado: Requiere Revisión - Diferencia Comisiones
+--------------------------------------------------
+NOTA:
+sdf prueba nota 2
+==================================================

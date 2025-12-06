@@ -1,0 +1,68 @@
+
+==================================================
+FECHA: 2025-12-05 21:05:49
+--------------------------------------------------
+DATOS DEL REGISTRO:
+  Fecha: 03-JUN-2025
+  Referencia: 094000257656767
+  Descripción: PAGO MOVIL RECIBIDO
+  Cargo: -
+  Abono: 2.364,39
+  SAE (Debe): -
+  SAINT (Haber): -
+  Estado: Pendiente en Libro
+--------------------------------------------------
+NOTA:
+sdavadsf
+==================================================
+
+==================================================
+FECHA: 2025-12-05 21:05:51
+--------------------------------------------------
+DATOS DEL REGISTRO:
+  Fecha: 03-JUN-2025
+  Referencia: 39804147916646301022041492925663
+  Descripción: COMISION PAGO MOVIL
+  Cargo: 28,50
+  Abono: -
+  SAE (Debe): -
+  SAINT (Haber): -
+  Estado: Conciliado
+--------------------------------------------------
+NOTA:
+sadfasf
+==================================================
+
+==================================================
+FECHA: 2025-12-05 21:05:53
+--------------------------------------------------
+DATOS DEL REGISTRO:
+  Fecha: 03-JUN-2025
+  Referencia: 39804248749662101342041492925661
+  Descripción: COMISION PAGO MOVIL (Dif: 2702.15)
+  Cargo: 39,41
+  Abono: -
+  SAE (Debe): -
+  SAINT (Haber): -
+  Estado: Requiere Revisión - Diferencia Comisiones
+--------------------------------------------------
+NOTA:
+asdfasdf
+==================================================
+
+==================================================
+FECHA: 2025-12-05 21:05:56
+--------------------------------------------------
+DATOS DEL REGISTRO:
+  Fecha: 03-JUN-2025
+  Referencia: 39804148381313101342041492925661
+  Descripción: COMISION PAGO MOVIL
+  Cargo: 69,60
+  Abono: -
+  SAE (Debe): -
+  SAINT (Haber): -
+  Estado: Conciliado
+--------------------------------------------------
+NOTA:
+asdfasdfasf
+==================================================
